@@ -1,0 +1,16 @@
+[package]
+name = "sanitize"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+readme = "README.md"
+description = "A simple command line tool for sanitizing a directory"
+homepage = "https://github.com/jhheider/sanitizer"
+repository = "https://github.com/jhheider/sanitizer"
+keywords = ["rm", "sanitize", "whitelist"]
+categories = ["command-line-utilities"]
+
+[dependencies]
+anyhow = "1.0.68"
+clap = { version = "4.1.4", features = ["cargo"] }
+regex = "1.7.1"
