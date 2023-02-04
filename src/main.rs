@@ -1,3 +1,4 @@
+mod clap;
 fn main() {
-    println!("Hello, world!");
+    dbg!(clap::setup().get_matches());
 }
