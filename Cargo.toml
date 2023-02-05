@@ -14,3 +14,4 @@ categories = ["command-line-utilities"]
 anyhow = "1.0.68"
 clap = { version = "4.1.4", features = ["cargo"] }
 regex = "1.7.1"
+colored = "2.0.0"

@@ -2,6 +2,7 @@ use std::path::PathBuf;
 
 use clap::{command, value_parser, Arg, ArgAction, Command};
 
+#[cfg(not(tarpaulin_include))]
 pub fn setup() -> Command {
     command!()
         .arg_required_else_help(true)
