@@ -6,6 +6,6 @@ mod from_config;
 mod run;
 
 pub struct Execution {
-    files: Vec<PathBuf>,
+    pub files: Vec<PathBuf>,
     config: Config,
 }

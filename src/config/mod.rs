@@ -4,7 +4,7 @@ use crate::logger::Logger;
 
 mod from_matches;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct Config {
     pub path: PathBuf,
     pub exclusions: Vec<String>,

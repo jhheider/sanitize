@@ -47,6 +47,7 @@ pub fn setup() -> Command {
             Arg::new("verbose")
                 .short('v')
                 .long("verbose")
+                .help("increase verbosity (can be used multiple times)")
                 .action(ArgAction::Count),
         )
 }

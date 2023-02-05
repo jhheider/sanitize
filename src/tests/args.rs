@@ -1,4 +1,4 @@
-use crate::clap;
+use crate::args;
 
 #[test]
 fn test_command_setup() {

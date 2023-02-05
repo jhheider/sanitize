@@ -1,13 +1,12 @@
+use anyhow::{Context, Result};
 use std::{
     fs::{remove_dir, remove_file},
-    io::stdin,
-    process::exit,
+    io::BufRead,
 };
 
 use super::Execution;
-use anyhow::{Context, Result};
 impl Execution {
-    pub fn run(&self) -> Result<()> {
+    pub fn run(&self, mut stdin: Box<dyn BufRead>) -> Result<()> {
         self.config.logger.verbose(format!(
             "preparing to sanitize {}",
             self.config.path.display()
@@ -16,7 +15,7 @@ impl Execution {
             self.config
                 .logger
                 .info(format!("{} is already clean", self.config.path.display()));
-            exit(0);
+            return Ok(());
         }
         let notice = format!(
             "this will sanitize {} file(s):\n{}",
@@ -30,17 +29,17 @@ impl Execution {
         self.config.logger.info(notice);
         if self.config.dry_run {
             self.config.logger.info("dry-run enabled, aborting");
-            exit(0);
+            return Ok(());
         }
         if !self.config.yes {
             self.config.logger.info("continue? [y/N] ");
             let mut yn = String::new();
-            stdin()
+            stdin
                 .read_line(&mut yn)
                 .context("can't read from terminal")?;
             if !yn.starts_with('y') {
                 self.config.logger.info("aborting");
-                exit(0);
+                return Ok(());
             }
         }
         for file in &self.files {
