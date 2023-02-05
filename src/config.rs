@@ -18,6 +18,7 @@ impl Config {
     #[cfg(not(tarpaulin_include))]
     pub fn from_matches(matches: &ArgMatches) -> Result<Self> {
         use std::{
+            env,
             fs::read_to_string,
             io::{stdin, BufRead},
         };
@@ -49,6 +50,23 @@ impl Config {
             }
         }
 
+        let home = PathBuf::from(env::var("HOME").unwrap_or("/".to_owned()));
+        let root = PathBuf::from("/");
+
+        let r#unsafe = matches.get_flag("unsafe");
+        if r#unsafe {
+            logger.verbose("unsafe mode enabled");
+        } else {
+            match path.canonicalize()? {
+                p if p == home || p == root => {
+                    return Err(Error::msg(
+                        "unsafe mode is required to sanitize the home or root directories",
+                    ))
+                }
+                _ => (),
+            }
+        }
+
         let file = matches.get_one::<PathBuf>("file");
         let exclusions = if let Some(file) = file {
             logger.verbose(format!("using ignore file {:?}", file));
@@ -60,7 +78,7 @@ impl Config {
                 })
                 .collect::<Vec<String>>()
         } else {
-            if !yes {
+            if !yes && !dry_run {
                 return Err(Error::msg(
                     "--yes is required when reading exclusions from stdin",
                 ));

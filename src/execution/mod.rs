@@ -23,16 +23,32 @@ impl Execution {
         }
         let overrides = overrides.build()?;
 
-        let files = WalkBuilder::new(&config.path)
+        let mut files = Vec::new();
+
+        for (idx, entry) in WalkBuilder::new(&config.path)
             .standard_filters(false)
             .overrides(overrides)
             .build()
-            .filter_map(|entry| Some(entry.ok()?.into_path()))
-            .filter(|path| path != &config.path)
-            .collect::<Vec<PathBuf>>()
-            .into_iter()
-            .rev()
-            .collect::<Vec<PathBuf>>();
+            .enumerate()
+        {
+            if idx % 100_000 == 0 {
+                config.logger.info(format!("scanned {} files", idx));
+            }
+            if entry.is_err() {
+                config
+                    .logger
+                    .warn(format!("failed to read file: {}", entry.unwrap_err()));
+                continue;
+            }
+            let entry = entry.unwrap();
+
+            if entry.path() == config.path {
+                continue;
+            }
+            files.push(entry.path().to_owned());
+        }
+        files.reverse();
+
         config.logger.debug(format!(
             "found file(s) to sanitize:\n{}",
             files

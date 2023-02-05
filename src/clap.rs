@@ -34,7 +34,13 @@ pub fn setup() -> Command {
             Arg::new("yes")
                 .short('y')
                 .long("yes")
-                .help("don't ask for confirmation")
+                .help("don't ask for confirmation (dangerous, but very, very useful)")
+                .action(ArgAction::SetTrue),
+        )
+        .arg(
+            Arg::new("unsafe")
+                .long("unsafe")
+                .help("allow unsafe operation (sanitize $HOME)")
                 .action(ArgAction::SetTrue),
         )
         .arg(
