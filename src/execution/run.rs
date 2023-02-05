@@ -43,28 +43,26 @@ impl Execution {
             }
         }
         for file in &self.files {
-            self.config.logger.trace(format!("processing {:?}", file));
+            self.config.logger.trace(format!("processing {file:?}"));
             if file.is_file() {
-                self.config.logger.trace(format!("{:?} is a file", file));
+                self.config.logger.trace(format!("{file:?} is a file"));
 
                 self.config
                     .logger
-                    .verbose(format!("removing file {:?}", file));
+                    .verbose(format!("removing file {file:?}"));
                 remove_file(file)?;
             } else if file.is_dir() {
-                self.config
-                    .logger
-                    .trace(format!("{:?} is a directory", file));
+                self.config.logger.trace(format!("{file:?} is a directory"));
 
                 if file.read_dir()?.next().is_some() {
                     self.config
                         .logger
-                        .debug(format!("directory {:?} is not empty, skipping", file));
+                        .debug(format!("directory {file:?} is not empty, skipping"));
                     continue;
                 }
                 self.config
                     .logger
-                    .verbose(format!("removing directory {:?}", file));
+                    .verbose(format!("removing directory {file:?}"));
                 remove_dir(file)?;
             }
         }

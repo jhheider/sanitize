@@ -31,10 +31,10 @@ impl Logger {
 
     fn log(&self, message: impl Display, level: LogLevel) {
         match level {
-            LogLevel::Error | LogLevel::Warning => eprintln!("[{}]: {}", level, message),
+            LogLevel::Error | LogLevel::Warning => eprintln!("[{level}]: {message}"),
             _ => {
                 if self.verbosity >= level {
-                    println!("[{}]: {}", level, message);
+                    println!("[{level}]: {message}");
                 }
             }
         }

@@ -25,7 +25,7 @@ impl Config {
             .context("path to sanitize is required")?
             .to_owned();
 
-        logger.debug(format!("sanitizing directory {:?}", path));
+        logger.debug(format!("sanitizing directory {path:?}"));
 
         let dry_run = matches.get_flag("dry_run");
         if dry_run {
@@ -59,8 +59,8 @@ impl Config {
 
         let file = matches.get_one::<PathBuf>("file");
         let exclusions = if let Some(file) = file {
-            logger.verbose(format!("using ignore file {:?}", file));
-            let file = read_to_string(file).context(format!("failed to read file {:?}", file))?;
+            logger.verbose(format!("using ignore file {file:?}"));
+            let file = read_to_string(file).context(format!("failed to read file {file:?}"))?;
             file.lines()
                 .map(|line| {
                     logger.trace(format!("read exclusion: {}", line.trim()));

@@ -2,20 +2,15 @@ use std::fmt::{Display, Formatter, Result};
 
 use colored::Colorize;
 
-#[derive(PartialEq, PartialOrd, Clone, Copy, Debug)]
+#[derive(PartialEq, PartialOrd, Clone, Copy, Debug, Default)]
 pub enum LogLevel {
     Error,
     Warning,
+    #[default]
     Info,
     Verbose,
     Debug,
     Trace,
-}
-
-impl Default for LogLevel {
-    fn default() -> Self {
-        LogLevel::Info
-    }
 }
 
 impl From<u8> for LogLevel {

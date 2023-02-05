@@ -8,8 +8,8 @@ impl Execution {
     pub fn from_config(config: &Config) -> Result<Self> {
         let mut overrides = OverrideBuilder::new(&config.path);
         for exclusion in &config.exclusions {
-            config.logger.trace(format!("excluding {}", exclusion));
-            overrides.add(&format!("!{}", exclusion))?;
+            config.logger.trace(format!("excluding {exclusion}"));
+            overrides.add(&format!("!{exclusion}"))?;
         }
         let overrides = overrides.build()?;
 
@@ -22,7 +22,7 @@ impl Execution {
             .enumerate()
         {
             if idx % 100_000 == 0 {
-                config.logger.info(format!("scanned {} files", idx));
+                config.logger.info(format!("scanned {idx} files"));
             }
             if entry.is_err() {
                 config
