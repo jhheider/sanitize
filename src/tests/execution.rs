@@ -43,13 +43,15 @@ fn test_execution_run() {
 
     assert!(ea.run(stdin.clone()).is_ok());
 
-    if PathBuf::from("/root").metadata().is_ok() {
-        // too risky
-        panic!("can't run test_execution_run on a non-readonly filesystem");
-    }
+    let temp = TempDir::new("test").unwrap();
+    temp.path()
+        .metadata()
+        .unwrap()
+        .permissions()
+        .set_readonly(true);
 
     let cb = Config {
-        path: PathBuf::from("/root"),
+        path: temp.path().to_path_buf(),
         dry_run: true,
         exclusions: vec![String::from("mod.rs")],
         ..Default::default()
