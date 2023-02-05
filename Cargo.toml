@@ -16,4 +16,3 @@ clap = { version = "4.1.4", features = ["cargo"] }
 colored = "2.0.0"
 ignore = "0.4.20"
 tempdir = "0.3.7"
-dyn-clone = "1.0.10"
