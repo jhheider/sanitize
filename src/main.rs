@@ -1,4 +1,4 @@
-mod clap;
+mod args;
 mod config;
 mod execution;
 mod logger;
@@ -10,7 +10,7 @@ use std::process::exit;
 
 #[cfg(not(tarpaulin_include))]
 fn main() {
-    let setup = clap::setup();
+    let setup = args::setup();
     let matches = setup.get_matches();
     let config = Config::from_matches(&matches).unwrap_or_else(|err| {
         eprintln!("[{}]: {:?}", "error".red().bold(), err);

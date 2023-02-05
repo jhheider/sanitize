@@ -1,28 +1,18 @@
-use std::path::PathBuf;
-
+use super::Config;
+use crate::logger::Logger;
 use anyhow::{Context, Result};
 use clap::ArgMatches;
 
-use crate::logger::Logger;
-
-#[derive(Debug, Clone)]
-pub struct Config {
-    pub path: PathBuf,
-    pub exclusions: Vec<String>,
-    pub dry_run: bool,
-    pub yes: bool,
-    pub logger: Logger,
-}
+use std::{
+    env,
+    fs::read_to_string,
+    io::{stdin, BufRead},
+    path::PathBuf,
+};
 
 impl Config {
     #[cfg(not(tarpaulin_include))]
     pub fn from_matches(matches: &ArgMatches) -> Result<Self> {
-        use std::{
-            env,
-            fs::read_to_string,
-            io::{stdin, BufRead},
-        };
-
         use anyhow::Error;
 
         let verbosity = matches.get_count("verbose");
