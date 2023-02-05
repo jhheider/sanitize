@@ -12,10 +12,18 @@ use std::process::exit;
 fn main() {
     let setup = clap::setup();
     let matches = setup.get_matches();
-    let config = Config::from_matches(&matches);
-    if config.is_err() {
-        eprintln!("[{}]: {:?}", "error".red().bold(), config.unwrap_err());
+    let config = Config::from_matches(&matches).unwrap_or_else(|err| {
+        eprintln!("[{}]: {:?}", "error".red().bold(), err);
         exit(1);
-    }
-    let execution = Execution::from_config(config.unwrap());
+    });
+
+    let execution = Execution::from_config(&config).unwrap_or_else(|err| {
+        config.logger.error(err);
+        exit(1);
+    });
+
+    execution.run().unwrap_or_else(|err| {
+        config.logger.error(err);
+        exit(1);
+    });
 }

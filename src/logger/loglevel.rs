@@ -18,8 +18,7 @@ impl From<u8> for LogLevel {
             0 => LogLevel::Info,
             1 => LogLevel::Verbose,
             2 => LogLevel::Debug,
-            3 => LogLevel::Trace,
-            _ => LogLevel::Info,
+            _ => LogLevel::Trace,
         }
     }
 }

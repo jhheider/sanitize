@@ -5,61 +5,70 @@ use clap::ArgMatches;
 
 use crate::logger::Logger;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Config {
     pub path: PathBuf,
-    exclusions: Vec<String>,
-    dry_run: bool,
-    regex: bool,
-    yes: bool,
-    logger: Logger,
+    pub exclusions: Vec<String>,
+    pub dry_run: bool,
+    pub yes: bool,
+    pub logger: Logger,
 }
 
 impl Config {
     #[cfg(not(tarpaulin_include))]
     pub fn from_matches(matches: &ArgMatches) -> Result<Self> {
-        use std::io::BufRead;
+        use std::{
+            fs::read_to_string,
+            io::{stdin, BufRead},
+        };
+
+        use anyhow::Error;
 
         let verbosity = matches.get_count("verbose");
 
         let logger = Logger::new(verbosity.into());
-        logger.info(format!("log level set to {verbosity}"));
+        logger.verbose(format!("log level set to {verbosity}"));
 
         let path = matches
             .get_one::<PathBuf>("path")
             .context("path to sanitize is required")?
             .to_owned();
 
-        logger.verbose(format!("sanitizing directory {:?}", path));
+        logger.debug(format!("sanitizing directory {:?}", path));
 
         let dry_run = matches.get_flag("dry_run");
         if dry_run {
             logger.verbose("dry-run enabled");
         }
 
-        let regex = matches.get_flag("regex");
-        if regex {
-            logger.verbose("regex matching enabled");
-        }
-
         let yes = matches.get_flag("yes");
         if yes {
             logger.verbose("confirmations bypassed");
+            if dry_run {
+                logger.warn("--yes has no effect with --dry-run");
+            }
         }
 
         let file = matches.get_one::<PathBuf>("file");
         let exclusions = if let Some(file) = file {
-            logger.verbose(format!("using file {:?}", file));
-            let file =
-                std::fs::read_to_string(file).context(format!("failed to read file {:?}", file))?;
+            logger.verbose(format!("using ignore file {:?}", file));
+            let file = read_to_string(file).context(format!("failed to read file {:?}", file))?;
             file.lines()
-                .map(|line| line.trim().to_owned())
+                .map(|line| {
+                    logger.trace(format!("read exclusion: {}", line.trim()));
+                    line.trim().to_owned()
+                })
                 .collect::<Vec<String>>()
         } else {
+            if !yes {
+                return Err(Error::msg(
+                    "--yes is required when reading exclusions from stdin",
+                ));
+            }
             logger.verbose("reading exlusions from stdin".to_string());
 
             let mut exclusions = Vec::new();
-            let stdin = std::io::stdin();
+            let stdin = stdin();
             let mut handle = stdin.lock();
             loop {
                 let mut line = String::new();
@@ -81,7 +90,6 @@ impl Config {
             path,
             exclusions,
             dry_run,
-            regex,
             yes,
             logger,
         })

@@ -15,7 +15,8 @@ pub fn setup() -> Command {
             Arg::new("file")
                 .help(
                     "the entries to keep, one per line\n\
-                         if not passed, will use stdin",
+                         if not passed, will use stdin\n\
+                         format is the same as .*ignore files",
                 )
                 .short('f')
                 .long("file")
@@ -27,13 +28,6 @@ pub fn setup() -> Command {
                 .short('n')
                 .long("dry-run")
                 .help("don't actually delete anything")
-                .action(ArgAction::SetTrue),
-        )
-        .arg(
-            Arg::new("regex")
-                .short('r')
-                .long("regex")
-                .help("use regex to match entries")
                 .action(ArgAction::SetTrue),
         )
         .arg(

@@ -3,8 +3,8 @@ mod loglevel;
 
 use crate::logger::loglevel::LogLevel;
 
-#[derive(Debug)]
-pub(crate) struct Logger {
+#[derive(Debug, Clone)]
+pub struct Logger {
     verbosity: LogLevel,
 }
 
